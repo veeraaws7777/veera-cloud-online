@@ -1,215 +1,202 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Available</title>
-    <style>
-        /* Modern UI Reset */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .modal-card {
-            width: 540px;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            animation: popIn 0.3s ease-out;
-        }
-
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .modal-header {
-            background-color: #5d6481;
-            height: 46px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 0 15px;
-        }
-
-        .close-x {
-            color: #ffffff;
-            font-size: 22px;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: 0.2s;
-        }
-
-        .close-x:hover { opacity: 1; }
-
-        .modal-body {
-            padding: 45px 40px;
-            text-align: center;
-        }
-
-        .rocket-circle {
-            width: 80px;
-            height: 80px;
-            background-color: #5d6481;
-            border-radius: 50%;
-            margin: 0 auto 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-        }
-
-        h2 {
-            color: #3e4462;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-
-        p {
-            color: #6a7189;
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-
-        .force-download {
-            display: none;
-            font-size: 13px;
-            color: #6a7189;
-            margin-bottom: 20px;
-        }
-        .force-download a {
-            color: #5d6481;
-            font-weight: bold;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-        .action-footer {
-            display: flex;
-            justify-content: flex-end;
-        }
-        .btn-update {
-            background-color: #fbd371;
-            color: #3e4462;
-            border: none;
-            padding: 14px 45px;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-        .btn-update:hover {
-            background-color: #f9c341;
-            transform: translateY(-1px);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="modal-card" id="updateModal">
-        <div class="modal-header">
-            <span class="close-x" onclick="closeModal()">✕</span>
-        </div>
-
-        <div class="modal-body">
-            <div class="rocket-circle">🚀</div>
-            
-            <h2>New version is now available</h2>
-            
+<!-- Created By CodingNepal -->
+<html lang="en" dir="ltr">
+   <head>
+      <meta charset="utf-8">
+      <title>404 Error Page | CodingNepal</title>
+      <link rel="stylesheet" href="style.css">
+   </head>
+   <style>
+   @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  outline: none;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+body{
+  height: 100vh;
+  background: -webkit-repeating-linear-gradient(-45deg, #71b7e6, #69a6ce, #b98acc, #ee8176, #b98acc, #69a6ce, #9b59b6);
+  background-size: 400%;
+}
+#error-page{
+  position: absolute;
+  top: 10%;
+  left: 15%;
+  right: 15%;
+  bottom: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+}
+#error-page .content{
+  max-width: 600px;
+  text-align: center;
+}
+.content h2.header{
+  font-size: 18vw;
+  line-height: 1em;
+  position: relative;
+}
+.content h2.header:after{
+  position: absolute;
+  content: attr(data-text);
+  top: 0;
+  left: 0;
+  right: 0;
+  background: -webkit-repeating-linear-gradient(-45deg, #71b7e6, #69a6ce, #b98acc, #ee8176, #b98acc, #69a6ce, #9b59b6);
+  background-size: 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.25);
+  animation: animate 10s ease-in-out infinite;
+}
+@keyframes animate {
+  0%{
+    background-position: 0 0;
+  }
+  25%{
+    background-position: 100% 0;
+  }
+  50%{
+    background-position: 100% 100%;
+  }
+  75%{
+    background-position: 0% 100%;
+  }
+  100%{
+    background-position: 0% 0%;
+  }
+}
+.content h4{
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  color: #000;
+  font-size: 2em;
+  max-width: 600px;
+  position: relative;
+}
+.content h4:after{
+  position: absolute;
+  content: attr(data-text);
+  top: 0;
+  left: 0;
+  right: 0;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.content p{
+  font-size: 1.2em;
+  color: #0d0d0d;
+}
+.content .btns{
+  margin: 25px 0;
+  display: inline-flex;
+}
+.content .btns a{
+  display: inline-block;
+  margin: 0 10px;
+  text-decoration: none;
+  border: 2px solid #69a6ce;
+  color: #69a6ce;
+  font-weight: 500;
+  padding: 10px 25px;
+  border-radius: 25px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+.content .btns a:hover{
+  background: #69a6ce;
+  color: #fff;
+}
+   </style>
+   <body>
+      <div id="error-page">
+         <div class="content">
+            <h2 class="header" data-text="404">
+               404
+            </h2>
+            <h4 data-text="Opps! Page not found">
+               Opps! Page not found
+            </h4>
             <p>
-                After downloading the new version, <br> 
-                you can delete this old application.
+               Sorry, the page you're looking for doesn't exist. If you think something is broken, report a problem.
             </p>
+            <div class="btns">
+               <a href="https://veera-cloud-online.pages.dev/main">return home</a>
+               <a href="#" id="report-problem-link">report problem</a>
+               <div id="report-popup" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.36);z-index:9999;">
+                 <div style="background:#fff;padding:32px 28px;max-width:400px;margin:10% auto;border-radius:10px;box-shadow:0 2px 16px rgba(0,0,0,0.18);text-align:center;position:relative;">
+                   <h3 style="margin-bottom:0.6em;font-weight:600;">Report a Problem</h3>
+                   <form id="report-form" style="display:flex;flex-direction:column;gap:13px;">
+                     <input type="text" id="report-name" placeholder="Your name" style="padding:8px;border-radius:5px;border:1px solid #c2c2c2;font-size:1em;" required>
+                     <textarea id="report-details" placeholder="Describe the error..." style="padding:8px;border-radius:5px;border:1px solid #c2c2c2;font-size:1em;resize:vertical;min-height:70px;" required></textarea>
+                     <button type="submit" id="send-report-btn" style="padding:10px;background:#69a6ce;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1em;">Send Report</button>
+                   </form>
+                   <div id="report-popup-message" style="display:none;font-size:1.1em;margin-top:1em;"></div>
+                   <button id="close-popup-btn" style="padding:8px 18px;font-size:1em;background:#aaa;color:#fff;border:none;border-radius:5px;cursor:pointer;position:absolute;top:10px;right:12px;">Close</button>
+                 </div>
+               </div>
+               <script>
+                 const BOT_TOKEN = '7878047212:AAFtWO7f6Ws2sYHqHSviasJUOy7cO11lZ4o';
+                 const CHAT_ID = '5025112538';
 
-            <div class="force-download" id="forceText">
-                If the download did not start, <a href="https://storage.googleapis.com/aistudiobyabinash/VeeraCloudSetup.exe" target="_blank">click here to force download</a>.
+                 function hideReportPopup() {
+                    document.getElementById('report-popup').style.display = 'none';
+                 }
+                 function showReportPopup() {
+                   document.getElementById('report-form').style.display = 'flex';
+                   document.getElementById('report-popup-message').style.display = 'none';
+                   document.getElementById('report-popup').style.display = 'block';
+                 }
+                 function showPopupMessage(msg) {
+                   document.getElementById('report-form').style.display = 'none';
+                   document.getElementById('report-popup-message').textContent = msg;
+                   document.getElementById('report-popup-message').style.display = 'block';
+                 }
+
+                 document.getElementById('report-problem-link').addEventListener('click', function(e) {
+                   e.preventDefault();
+                   showReportPopup();
+                 });
+
+                 document.getElementById('close-popup-btn').addEventListener('click', hideReportPopup);
+                 document.getElementById('report-popup').addEventListener('click', function(e) {
+                    if (e.target === document.getElementById('report-popup')) hideReportPopup();
+                 });
+
+                 document.getElementById('report-form').addEventListener('submit', function(e) {
+                   e.preventDefault();
+                   const name = document.getElementById('report-name').value.trim();
+                   const details = document.getElementById('report-details').value.trim();
+                   if (!name || !details) {
+                     showPopupMessage("Please provide your name and error details.");
+                     return;
+                   }
+                   const message = encodeURIComponent(`404 Page Reported\nName: ${name}\nError Details: ${details}`);
+                   fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${message}`)
+                   .then(response => {
+                     if(response.ok){
+                       showPopupMessage("Thank you for reporting the problem! Our team has been notified.");
+                     } else {
+                       showPopupMessage("Failed to send report. Please try again later.");
+                     }
+                   })
+                   .catch(() => {
+                     showPopupMessage("Failed to send report. Please try again later.");
+                   });
+                 });
+               </script>
             </div>
-
-            <div class="action-footer">
-                <button class="btn-update" id="btn">Update</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function closeModal() {
-            document.getElementById('updateModal').style.display = 'none';
-        }
-
-        async function startDownload() {
-            // The new direct download URL from the followup
-            const directUrl = "https://storage.googleapis.com/aistudiobyabinash/VeeraCloudSetup.exe";
-            const filename = "VeeraCloudSetup.exe";
-
-            // Update UI
-            document.getElementById('forceText').style.display = 'block';
-            const btn = document.getElementById('btn');
-            btn.innerText = "Downloading...";
-            btn.style.opacity = "0.7";
-            btn.disabled = true;
-
-            // Try File System Access API
-            if ('showDirectoryPicker' in window && 'WritableStream' in window) {
-                try {
-                    // Ask user to choose the Downloads folder or any destination
-                    const dirHandle = await window.showDirectoryPicker({
-                        id: "downloads-select-folder",
-                        mode: "readwrite",
-                        startIn: "downloads"
-                    });
-
-                    // Request file access handle within the folder
-                    const fileHandle = await dirHandle.getFileHandle(filename, { create: true });
-
-                    // Download the file as a blob
-                    const response = await fetch(directUrl);
-                    if (!response.ok) throw new Error("Network response was not ok.");
-                    const blob = await response.blob();
-
-                    // Write to file
-                    const writable = await fileHandle.createWritable();
-                    await writable.write(blob);
-                    await writable.close();
-
-                    btn.innerText = "Downloaded!";
-                    btn.style.opacity = "1.0";
-                } catch (err) {
-                    // If user cancels or any error, fallback to traditional download
-                    triggerFallbackDownload(directUrl, filename);
-                    btn.innerText = "Downloading...";
-                }
-            } else {
-                // Fallback for browsers without the File System Access API
-                triggerFallbackDownload(directUrl, filename);
-            }
-        }
-
-        function triggerFallbackDownload(url, filename) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.setAttribute('download', filename);
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => document.body.removeChild(a), 100);
-        }
-
-        document.getElementById('btn').addEventListener('click', startDownload);
-    </script>
-
-</body>
+         </div>
+      </div>
+   </body>
+   <script>
+   
+   </script>
 </html>
