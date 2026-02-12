@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Studio Intro</title>
+
+<style>
+html, body {
+  margin: 0;
+  height: 100%;
+  background: black;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Video (hidden first) */
+.video-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: none;
+  pointer-events: none;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  border: none;
+  object-fit: cover;
+  background: black;
+  display: block;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  background: black;
+}
+
+.logo-img {
+  max-width: 220px;
+  width: 40vw;
+  margin-bottom: 24px;
+  margin-top: -40px;
+  opacity: 0;
+  animation: fadeIn 1.5s forwards;
+  animation-delay: 0.2s;
+}
+
+.title {
+  font-size: clamp(32px, 5vw, 60px);
+  font-weight: bold;
+  opacity: 0;
+  animation: fadeIn 1.5s forwards;
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fadeIn 1.5s forwards;
+  animation-delay: 1s;
+}
+
+.footer {
+  position: absolute;
+  bottom: 30px;
+  font-size: 14px;
+  opacity: 0;
+  animation: fadeIn 1.5s forwards;
+  animation-delay: 2s;
+}
+
+.skip-btn {
+  position: absolute;
+  right: 36px;
+  bottom: 36px; /* changed from top: 36px to bottom: 36px */
+  z-index: 10;
+  background: red;
+  color: #fff;
+  font-size: 18px;
+  padding: 12px 28px;
+  border-radius: 28px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.skip-btn.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<!-- VIDEO (loaded later) -->
+<div class="video-bg" id="videoBg"></div>
+
+<!-- Skip button to be shown at 31s in video, in bottom right corner-->
+<button id="skipBtn" class="skip-btn" style="display:none;">Skip</button>
+
+<!-- TEXT -->
+<div class="overlay" id="overlay">
+  <img class="logo-img" src="https://cdn.nareshit.com/images/naresh-it-logo.png" alt="NareshIT Logo"><br>
+  <div class="title">Welcome to the AI Studio</div>
+  <div class="subtitle">Veera Cloud</div>
+  <div class="footer">Developed by Abinash Kumar</div>
+</div>
+
+<script>
+  // Video direct link (720p)
+  const VIDEO_SRC_720 = "https://storage.googleapis.com/aistudiobyabinash/ai%20-%20intro%20by%20abi.mp4";
+  const SKIP_TIME = 2; // 31 seconds to show skip button
+
+  // 1. rel=preload
+  const preloadLink = document.createElement('link');
+  preloadLink.rel = 'preload';
+  preloadLink.as = 'video';
+  preloadLink.href = VIDEO_SRC_720;
+  document.head.appendChild(preloadLink);
+
+  // 2. Hidden video element for parallel preloading
+  const preloadVideo = document.createElement("video");
+  preloadVideo.src = VIDEO_SRC_720;
+  preloadVideo.preload = "auto";
+  preloadVideo.setAttribute("playsinline", "");
+  preloadVideo.setAttribute("muted", "");
+  preloadVideo.setAttribute("style", "display: none;");
+  document.body.appendChild(preloadVideo);
+  window._preloadVideo = preloadVideo;
+
+  // 3. Blob pre-fetch
+  let videoBlobURL = null;
+  const videoBlobPromise = fetch(VIDEO_SRC_720)
+    .then(resp => {
+      if (!resp.ok) throw new Error('Failed to fetch');
+      return resp.blob();
+    }).then(blob => {
+      videoBlobURL = URL.createObjectURL(blob);
+      return videoBlobURL;
+    }).catch(() => null);
+
+  // Ensure overlay displays until everything is ready
+  async function showVideoNoWait() {
+    // Wait for overlay fade-in/animation
+    await new Promise(res => setTimeout(res, 3500));
+
+    // Now ensure video is as ready as possible; prefer Blob, fallback to browser cache
+    let finalSrc = VIDEO_SRC_720;
+
+    // Prioritize blob if arrived in parallel
+    if (videoBlobURL) {
+      finalSrc = videoBlobURL;
+    } else {
+      try {
+        const gotBlob = await Promise.race([
+          videoBlobPromise,
+          new Promise(res => setTimeout(() => res(null), 600))
+        ]);
+        if (gotBlob) finalSrc = gotBlob;
+      } catch {}
+    }
+
+    // Remove overlay
+    const overlay = document.getElementById("overlay");
+    if (overlay) overlay.parentNode.removeChild(overlay);
+
+    // Remove preloader
+    if (window._preloadVideo && window._preloadVideo.parentNode) {
+      window._preloadVideo.parentNode.removeChild(window._preloadVideo);
+    }
+
+    // Main video logic
+    const videoBg = document.getElementById("videoBg");
+    const skipBtn = document.getElementById("skipBtn");
+
+    const video = document.createElement("video");
+    video.src = finalSrc;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.controls = false;
+    video.preload = "auto";
+    video.muted = false;
+    video.volume = 1;
+    video.setAttribute("width", "1280");
+    video.setAttribute("height", "720");
+    video.setAttribute("style", "width: 100%; height: 100%; object-fit: cover; background: black; display: block;");
+    video.addEventListener("contextmenu", (e) => e.preventDefault());
+
+    // Show video container as soon as possible
+    video.addEventListener("loadeddata", function showNow() {
+      videoBg.innerHTML = "";
+      videoBg.appendChild(video);
+      videoBg.style.display = "block";
+      videoBg.style.pointerEvents = "auto";
+      if (video.paused) {
+        try { video.play(); } catch {}
+      }
+    }, { once: true });
+
+    // Defensive: always show after 1s if loadeddata missed for any reason
+    setTimeout(() => {
+      if (!videoBg.contains(video)) {
+        videoBg.innerHTML = "";
+        videoBg.appendChild(video);
+        videoBg.style.display = "block";
+        videoBg.style.pointerEvents = "auto";
+        if (video.paused) {
+          try { video.play(); } catch {}
+        }
+      }
+    }, 1200);
+
+    const tryPlay = () => {
+      video.muted = false;
+      video.volume = 1;
+      let playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          video.muted = true;
+          video.play();
+        });
+      }
+    };
+    video.addEventListener('canplay', tryPlay, { once: true });
+
+    if (skipBtn) {
+      skipBtn.style.display = "block";
+      skipBtn.addEventListener('click', function() {
+        window.location.href = "ai.html";
+      });
+    }
+
+    video.addEventListener("timeupdate", function onTimeUpdate() {
+      if (video.currentTime >= SKIP_TIME) {
+        if (skipBtn && !skipBtn.classList.contains("visible")) {
+          skipBtn.classList.add("visible");
+        }
+      }
+    });
+
+    video.addEventListener('ended', function() {
+      window.location.href = "ai.html";
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    showVideoNoWait();
+  });
+</script>
+
+</body>
+</html>

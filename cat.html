@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Authentication | Secure Access</title>
+    <style>
+        :root {
+            --primary: #ffffff;
+            --secondary: rgba(255, 255, 255, 0.4);
+            --bg-deep: #080808;
+            --accent-glow: rgba(168, 85, 247, 0.15); /* Subtle brand hint */
+            --font-main: 'Inter', -apple-system, system-ui, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-deep);
+            font-family: var(--font-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #loader-wrapper {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #121212 0%, #050505 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Subtle ambient glow behind the logo */
+        .glow-sphere {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--accent-glow);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .brand-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin-bottom: 40px;
+        }
+
+        /* Base Icon - Minimalist Silhouette */
+        .icon-base {
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            filter: grayscale(1);
+        }
+
+        /* Reveal Icon - White High Contrast */
+        .icon-reveal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            clip-path: inset(100% 0 0 0);
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+            animation: advancedFill 3.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+        }
+
+        @keyframes advancedFill {
+            0% { clip-path: inset(100% 0 0 0); transform: scale(0.95); }
+            100% { clip-path: inset(0% 0 0 0); transform: scale(1); }
+        }
+
+        /* Progress HUD */
+        .hud-display {
+            width: 240px;
+            text-align: center;
+        }
+
+        .progress-track {
+            height: 1px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            position: absolute;
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            transition: width 0.3s ease-out;
+        }
+
+        .metadata {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--secondary);
+            text-transform: uppercase;
+        }
+
+        /* Log Terminal Effect */
+        #system-log {
+            margin-top: 20px;
+            font-size: 9px;
+            color: #444;
+            height: 14px;
+            overflow: hidden;
+            font-family: monospace;
+        }
+
+        /* Exit State */
+        .system-ready {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader-wrapper">
+        <div class="glow-sphere"></div>
+        
+        <div class="brand-container">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/045/720/728/small_2x/dark-cat-head-free-png.png" class="icon-base">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/045/720/728/small_2x/dark-cat-head-free-png.png" class="icon-reveal">
+        </div>
+
+        <div class="hud-display">
+            <div class="progress-track">
+                <div class="progress-bar" id="bar"></div>
+            </div>
+            <div class="metadata">
+                <span id="status-text">Synchronizing...</span>
+                <span id="percent-text">0%</span>
+            </div>
+            <div id="system-log">_INIT_SEQUENCE</div>
+        </div>
+    </div>
+
+    <script>
+        const logs = [
+            "CHECKING_ENCRYPTION_PROTOCOLS",
+            "ESTABLISHING_SECURE_HANDSHAKE",
+            "LOADING_UI_ASSETS",
+            "AUTHORIZING_USER_NODE",
+            "FINALIZING_SESSION"
+        ];
+
+        function runLoader() {
+            const bar = document.getElementById('bar');
+            const pText = document.getElementById('percent-text');
+            const sText = document.getElementById('status-text');
+            const logText = document.getElementById('system-log');
+            const wrapper = document.getElementById('loader-wrapper');
+
+            let progress = 0;
+            
+            const update = setInterval(() => {
+                progress += Math.random() * 2; // Real-looking jittery progress
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(update);
+                    sText.innerText = "Access Granted";
+                    
+                    setTimeout(() => {
+                        wrapper.classList.add('system-ready');
+                        setTimeout(() => {
+                            window.location.href = 'main.html';
+                        }, 1000);
+                    }, 500);
+                }
+
+                bar.style.width = progress + "%";
+                pText.innerText = Math.floor(progress) + "%";
+                
+                // Update log messages based on progress
+                const logIndex = Math.floor((progress / 100) * logs.length);
+                if (logs[logIndex]) logText.innerText = `>> ${logs[logIndex]}`;
+
+            }, 50);
+        }
+
+        window.addEventListener('load', runLoader);
+    </script>
+</body>
+</html>
