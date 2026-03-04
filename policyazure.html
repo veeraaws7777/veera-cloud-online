@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Sandbox Portal | Admin: Abinash Kumar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --azure-blue: #0078d4;
+            --azure-dark: #005a9e;
+            --azure-navy: #232f3e;
+            --bg-light: #f3f2f1;
+            --white: #ffffff;
+            --success: #107c10;
+            --danger: #a4262c;
+            --text-main: #323130;
+            --text-muted: #605e5c;
+            --border: #edebe9;
+        }
+
+        * { box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg-light); color: var(--text-main); display: flex; }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 320px; background: var(--white); height: 100vh; position: fixed;
+            border-right: 1px solid var(--border); padding: 2rem; overflow-y: auto; z-index: 1000;
+        }
+
+        .logo { font-weight: 800; font-size: 1.4rem; color: var(--azure-blue); margin-bottom: 2rem; display: flex; align-items: center; gap: 12px; }
+
+        .admin-pill {
+            background: var(--azure-blue); color: white; padding: 1.2rem; border-radius: 12px; margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,120,212,0.2);
+        }
+        .admin-pill h4 { margin: 0; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+        .admin-pill .name { font-size: 1.1rem; font-weight: 700; margin: 5px 0; }
+        .admin-pill .email { font-size: 0.8rem; opacity: 0.9; text-decoration: none; color: white; display: block; }
+
+        .nav-menu { list-style: none; padding: 0; }
+        .nav-link { 
+            display: flex; align-items: center; gap: 10px; padding: 12px; 
+            text-decoration: none; color: var(--text-muted); font-weight: 500; border-radius: 8px; transition: 0.2s;
+        }
+        .nav-link:hover { background: #f3f2f1; color: var(--azure-blue); }
+
+        /* --- Main Content --- */
+        .main-content { margin-left: 320px; padding: 3rem 4rem; width: 100%; max-width: 1200px; }
+
+        .status-badge { display: inline-flex; align-items: center; gap: 8px; background: #dff6dd; color: #107c10; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+        .pulse-dot { width: 8px; height: 8px; background: #107c10; border-radius: 50%; animation: pulse 2s infinite; }
+
+        .card { background: var(--white); border-radius: 12px; padding: 2.5rem; box-shadow: 0 2px 15px rgba(0,0,0,0.05); margin-bottom: 2.5rem; border: 1px solid var(--border); }
+        h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.5px; margin-top: 10px; }
+        h2 { font-size: 1.4rem; color: var(--azure-blue); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+
+        /* --- Metrics Grid --- */
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 2rem; }
+        .m-item { background: #faf9f8; padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border); }
+        .m-item strong { display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; }
+        .m-item span { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+
+        /* --- Table --- */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 1rem; background: #faf9f8; border-bottom: 2px solid var(--border); font-size: 0.85rem; }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        
+        .badge { padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 800; }
+        .b-supported { background: #dff6dd; color: #107c10; }
+        .b-conditional { background: #fff4ce; color: #797775; }
+
+        /* --- Form --- */
+        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; margin-top: 8px; }
+        .submit-btn {
+            background: var(--azure-blue); color: white; border: none; padding: 15px 30px; 
+            border-radius: 4px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 20px;
+        }
+        .submit-btn:hover { background: var(--azure-dark); }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fa-brands fa-microsoft"></i>
+            <span>AzureSandbox</span>
+        </div>
+
+        <div class="admin-pill">
+            <h4>Environment Admin</h4>
+            <div class="name">Abinash Kumar</div>
+            <a href="mailto:abinashkumar5593@gmail.com" class="email">abinashkumar5593@gmail.com</a>
+        </div>
+
+        <nav>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#overview" class="nav-link"><i class="fa-solid fa-house"></i> Overview</a></li>
+                <li class="nav-item"><a href="#services" class="nav-link"><i class="fa-solid fa-server"></i> Service Support</a></li>
+                <li class="nav-item"><a href="#request" class="nav-link"><i class="fa-solid fa-paper-plane"></i> Submit Request</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <div class="status-badge"><div class="pulse-dot"></div> Azure Sandbox Online</div>
+            <h1>Azure Cloud Sandbox</h1>
+            <p style="color: var(--text-muted);">Real-time learning environment with managed enterprise restrictions.</p>
+        </header>
+
+        <section id="overview" class="card">
+            <h2><i class="fa-solid fa-globe"></i> Global Restrictions</h2>
+            <div class="metrics">
+                <div class="m-item"><strong>Primary Regions</strong><span>US, India, Japan, Europe</span></div>
+                <div class="m-item"><strong>Identity Control</strong><span>Managed RBAC Only</span></div>
+                <div class="m-item"><strong>Max VM Instances</strong><span>10 Instances</span></div>
+                <div class="m-item"><strong>Total CPU Core Limit</strong><span>10 vCPUs</span></div>
+            </div>
+            <p>Resource Group creation is restricted. Use pre-allocated resources for all deployments.</p>
+        </section>
+
+        
+
+        <section id="services" class="card">
+            <h2><i class="fa-solid fa-table-list"></i> Supported Service Catalog</h2>
+            <table>
+                <thead>
+                    <tr><th>Service</th><th>Level</th><th>Key Limits</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Virtual Machines</strong></td><td><span class="badge b-conditional">Conditional</span></td><td>SKUs: A1 v2, B-Series, D-Series. No GPU.</td></tr>
+                    <tr><td><strong>Azure SQL</strong></td><td><span class="badge b-conditional">Conditional</span></td><td>Basic/Standard tiers only. No Managed Instances.</td></tr>
+                    <tr><td><strong>Cognitive Services</strong></td><td><span class="badge b-conditional">Conditional</span></td><td>SKUs: S0, S1. Max 2 services.</td></tr>
+                    <tr><td><strong>AKS (Kubernetes)</strong></td><td><span class="badge b-conditional">Conditional</span></td><td>Max 3 clusters; 3 nodes per cluster.</td></tr>
+                    <tr><td><strong>App Service</strong></td><td><span class="badge b-supported">Supported</span></td><td>Allowed SKUs: F1, B1-B3, S1, Y1.</td></tr>
+                    <tr><td><strong>Storage Accounts</strong></td><td><span class="badge b-supported">Supported</span></td><td>Blob, File, Table, and Queue support.</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="request" class="card">
+            <h2><i class="fa-solid fa-envelope"></i> Request Service Access</h2>
+            <p>Submit a request to <strong>Abinash Kumar</strong> for SKU increases or additional service authorization.</p>
+            
+            <form id="tgForm">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <label>Your Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Learner Name" required>
+                    </div>
+                    <div>
+                        <label>Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="learner@example.com" required>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>Requested Service & Reason</label>
+                    <textarea id="message" class="form-control" rows="4" placeholder="e.g. Need Azure Machine Learning Workspace for Lab 4..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">Submit Request</button>
+            </form>
+            <div id="statusMsg" style="margin-top: 15px; font-weight: 700; text-align: center;"></div>
+        </section>
+
+        <footer style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 3rem;">
+            &copy; 2026 Azure Learning Sandbox. Authorized Administrator: Abinash Kumar.
+        </footer>
+    </main>
+
+    <script>
+        const BOT_TOKEN = '7878047212:AAFtWO7f6Ws2sYHqHSviasJUOy7cO11lZ4o';
+        const CHAT_ID = '5025112538';
+
+        document.getElementById('tgForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const status = document.getElementById('statusMsg');
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            const text = `🔹 *New Azure Sandbox Request*\n\n👤 *User:* ${name}\n📧 *Email:* ${email}\n\n📝 *Request Details:*\n${message}`;
+
+            btn.disabled = true;
+            btn.innerHTML = 'Sending to Abinash Kumar...';
+
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
+                });
+
+                if(res.ok) {
+                    status.style.color = 'var(--success)';
+                    status.innerHTML = '✅ Request Sent Successfully!';
+                    this.reset();
+                } else { throw new Error(); }
+            } catch (err) {
+                status.style.color = 'var(--danger)';
+                status.innerHTML = '❌ Transmission Error. Check connection.';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Submit Request';
+            }
+        });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MBJM2CCKJ6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-MBJM2CCKJ6');
+</script>
+</body>
+</html>

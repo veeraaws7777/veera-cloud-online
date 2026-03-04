@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --white: #f0ece4;
+            --dim: rgba(240, 236, 228, 0.3);
+            --faint: rgba(240, 236, 228, 0.06);
+            --bg: #080808;
+            --purple: #a855f7;
+            --purple-dim: rgba(168, 85, 247, 0.12);
+            --purple-glow: rgba(168, 85, 247, 0.4);
+            --green: #4ade80;
+            --green-dim: rgba(74, 222, 128, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            font-family: 'Space Mono', monospace;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--white);
+        }
+
+        /* ─── GRID BACKGROUND ─── */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(168,85,247,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168,85,247,0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+            z-index: 0;
+        }
+
+        .grid-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 30%, #080808 100%);
+        }
+
+        /* ─── SCANLINE ─── */
+        .scanline {
+            position: fixed;
+            top: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(168,85,247,0.6), transparent);
+            z-index: 100;
+            animation: scan 4s linear infinite;
+            box-shadow: 0 0 20px rgba(168,85,247,0.5);
+        }
+
+        @keyframes scan {
+            0% { top: -2px; opacity: 1; }
+            95% { opacity: 1; }
+            100% { top: 100vh; opacity: 0; }
+        }
+
+        /* ─── CORNER DECORATIONS ─── */
+        .corner {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            z-index: 10;
+        }
+        .corner::before, .corner::after {
+            content: '';
+            position: absolute;
+            background: var(--purple);
+            opacity: 0.5;
+        }
+        .corner::before { width: 100%; height: 1px; }
+        .corner::after  { width: 1px; height: 100%; }
+        .corner.tl { top: 24px; left: 24px; }
+        .corner.tr { top: 24px; right: 24px; transform: scaleX(-1); }
+        .corner.bl { bottom: 24px; left: 24px; transform: scaleY(-1); }
+        .corner.br { bottom: 24px; right: 24px; transform: scale(-1); }
+
+        /* ─── SIDE LABELS ─── */
+        .side-label {
+            position: fixed;
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: var(--dim);
+            text-transform: uppercase;
+            z-index: 10;
+        }
+        .side-label.left  { left: 32px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+        .side-label.right { right: 32px; top: 50%; transform: translateY(-50%) rotate(90deg); }
+
+        /* ─── MAIN WRAPPER ─── */
+        #loader-wrapper {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            opacity: 1;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        #loader-wrapper.exit {
+            opacity: 0;
+            transform: scale(0.97);
+        }
+
+        /* ─── TOP META ─── */
+        .top-meta {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 40px;
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--dim);
+            text-transform: uppercase;
+        }
+
+        .top-meta span { position: relative; }
+        .top-meta span::before {
+            content: '//';
+            margin-right: 6px;
+            color: var(--purple);
+            opacity: 0.6;
+        }
+
+        /* ─── BRAND RING ─── */
+        .brand-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin-bottom: 48px;
+        }
+
+        /* Outer rotating ring */
+        .ring-outer {
+            position: absolute;
+            inset: -16px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: rgba(168,85,247,0.6);
+            border-right-color: rgba(168,85,247,0.2);
+            animation: spinCW 3s linear infinite;
+        }
+
+        /* Inner counter-rotating ring */
+        .ring-inner {
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-bottom-color: rgba(168,85,247,0.4);
+            border-left-color: rgba(168,85,247,0.15);
+            animation: spinCCW 2s linear infinite;
+        }
+
+        /* Tick marks on outer ring */
+        .ring-ticks {
+            position: absolute;
+            inset: -20px;
+            border-radius: 50%;
+            animation: spinCW 8s linear infinite;
+        }
+
+        .tick {
+            position: absolute;
+            width: 4px;
+            height: 1px;
+            background: rgba(168,85,247,0.5);
+            top: 50%;
+            left: 50%;
+            transform-origin: left center;
+        }
+
+        @keyframes spinCW  { to { transform: rotate(360deg); } }
+        @keyframes spinCCW { to { transform: rotate(-360deg); } }
+
+        /* Glow */
+        .brand-glow {
+            position: absolute;
+            inset: -30px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(168,85,247,0.2) 0%, transparent 70%);
+            animation: breathe 2.5s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        /* Cat icon wrapper */
+        .icon-wrap {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            background: radial-gradient(circle at 40% 35%, #1a0a2e, #080808);
+            border: 1px solid rgba(168,85,247,0.2);
+        }
+
+        .icon-base, .icon-reveal {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            object-fit: contain;
+        }
+
+        .icon-base {
+            opacity: 0.08;
+            filter: grayscale(1);
+        }
+
+        .icon-reveal {
+            clip-path: inset(100% 0 0 0);
+            filter: drop-shadow(0 0 12px rgba(168,85,247,0.8)) brightness(1.2);
+            animation: revealFill 3s cubic-bezier(0.19, 1, 0.22, 1) 0.5s forwards;
+        }
+
+        @keyframes revealFill {
+            0%   { clip-path: inset(100% 0 0 0); }
+            100% { clip-path: inset(0% 0 0 0); }
+        }
+
+        /* ─── NODE ID ─── */
+        .node-id {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--purple);
+            opacity: 0.7;
+            margin-bottom: 28px;
+            text-transform: uppercase;
+        }
+
+        /* ─── TITLE ─── */
+        .auth-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--white);
+            margin-bottom: 32px;
+            opacity: 0.9;
+        }
+
+        /* ─── PROGRESS SYSTEM ─── */
+        .progress-system {
+            width: 280px;
+        }
+
+        /* Segmented progress bar */
+        .segments {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 6px;
+        }
+
+        .seg {
+            height: 3px;
+            flex: 1;
+            background: rgba(255,255,255,0.07);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .seg-fill {
+            position: absolute;
+            inset: 0;
+            background: var(--purple);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 8px var(--purple-glow);
+        }
+
+        .seg.active .seg-fill { transform: scaleX(1); }
+        .seg.partial .seg-fill { transform: scaleX(var(--partial, 0.5)); }
+
+        /* Main thin bar */
+        .main-track {
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            position: relative;
+            margin-bottom: 14px;
+            overflow: visible;
+        }
+
+        .main-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--purple), rgba(168,85,247,0.6));
+            box-shadow: 0 0 12px var(--purple-glow), 0 0 4px var(--purple);
+            transition: width 0.15s ease-out;
+            position: relative;
+        }
+
+        .main-fill::after {
+            content: '';
+            position: absolute;
+            right: -1px;
+            top: -3px;
+            width: 1px;
+            height: 7px;
+            background: var(--white);
+            box-shadow: 0 0 6px var(--white);
+        }
+
+        /* Meta row */
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            color: var(--dim);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        #status-text { color: var(--white); opacity: 0.7; }
+        #percent-text { 
+            font-size: 11px; 
+            font-weight: 700; 
+            color: var(--purple);
+            letter-spacing: 1px;
+        }
+
+        /* ─── LOG TERMINAL ─── */
+        .log-terminal {
+            background: rgba(168,85,247,0.04);
+            border: 1px solid rgba(168,85,247,0.1);
+            padding: 10px 14px;
+            font-size: 8.5px;
+            letter-spacing: 1px;
+            color: #555;
+            height: 34px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .log-terminal::before {
+            content: '>';
+            color: var(--purple);
+            opacity: 0.5;
+            margin-right: 8px;
+        }
+
+        #system-log { 
+            display: inline;
+            color: #666;
+        }
+
+        .cursor-blink {
+            display: inline-block;
+            width: 6px;
+            height: 10px;
+            background: var(--purple);
+            opacity: 0.7;
+            margin-left: 3px;
+            vertical-align: middle;
+            animation: blink 0.8s step-end infinite;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 0.7; } 50% { opacity: 0; } }
+
+        /* ─── ACCESS GRANTED STATE ─── */
+        .granted-flash {
+            position: fixed;
+            inset: 0;
+            background: rgba(74, 222, 128, 0.06);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.1s;
+        }
+
+        .granted-flash.show { opacity: 1; }
+
+        /* Status dot */
+        .status-dot {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--purple);
+            margin-right: 8px;
+            animation: dotPulse 1s ease-in-out infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(168,85,247,0.6); }
+            50% { box-shadow: 0 0 0 4px rgba(168,85,247,0); }
+        }
+
+        .status-dot.green { 
+            background: var(--green); 
+            animation: none;
+            box-shadow: 0 0 8px var(--green);
+        }
+
+        /* Data points scattered */
+        .data-points {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .data-point {
+            position: absolute;
+            font-family: 'Space Mono', monospace;
+            font-size: 8px;
+            color: rgba(168,85,247,0.15);
+            letter-spacing: 1px;
+            animation: floatUp 8s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes floatUp {
+            0%   { transform: translateY(0); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { transform: translateY(-120vh); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-bg"></div>
+    <div class="scanline"></div>
+    <div class="granted-flash" id="granted-flash"></div>
+
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <span class="side-label left">SEC·LAYER·7 // AUTH·NODE</span>
+    <span class="side-label right">PROTOCOL·v4.2 // ENCRYPTED</span>
+
+    <div class="data-points" id="data-points"></div>
+
+    <div id="loader-wrapper">
+
+        <div class="top-meta">
+            <span>NODE 7</span>
+            <span>LAYER SEC</span>
+            <span id="timestamp">--:--:--</span>
+        </div>
+
+        <div class="brand-container">
+            <div class="brand-glow"></div>
+            <div class="ring-ticks" id="ring-ticks"></div>
+            <div class="ring-outer"></div>
+            <div class="ring-inner"></div>
+            <div class="icon-wrap">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/045/720/728/small_2x/dark-cat-head-free-png.png" class="icon-base">
+                <img src="https://static.vecteezy.com/system/resources/thumbnails/045/720/728/small_2x/dark-cat-head-free-png.png" class="icon-reveal">
+            </div>
+        </div>
+
+        <div class="node-id">UID · <span id="uid-val">A7F2·····</span></div>
+        <div class="auth-title">System Authentication</div>
+
+        <div class="progress-system">
+            <div class="segments" id="segments">
+                <div class="seg" data-i="0"><div class="seg-fill"></div></div>
+                <div class="seg" data-i="1"><div class="seg-fill"></div></div>
+                <div class="seg" data-i="2"><div class="seg-fill"></div></div>
+                <div class="seg" data-i="3"><div class="seg-fill"></div></div>
+                <div class="seg" data-i="4"><div class="seg-fill"></div></div>
+                <div class="seg" data-i="5"><div class="seg-fill"></div></div>
+                <div class="seg" data-i="6"><div class="seg-fill"></div></div>
+                <div class="seg" data-i="7"><div class="seg-fill"></div></div>
+            </div>
+
+            <div class="main-track">
+                <div class="main-fill" id="bar"></div>
+            </div>
+
+            <div class="meta-row">
+                <span><span class="status-dot" id="status-dot"></span><span id="status-text">Synchronizing</span></span>
+                <span id="percent-text">0%</span>
+            </div>
+
+            <div class="log-terminal">
+                <span id="system-log">INIT_SEQUENCE_STARTED</span><span class="cursor-blink"></span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ── Tick marks
+        const ticks = document.getElementById('ring-ticks');
+        for (let i = 0; i < 32; i++) {
+            const t = document.createElement('div');
+            t.className = 'tick';
+            const angle = (i / 32) * 360;
+            const dist = 90; // px from center
+            const rad = (angle - 90) * Math.PI / 180;
+            const x = Math.cos(rad) * dist;
+            const y = Math.sin(rad) * dist;
+            t.style.cssText = `
+                position: absolute;
+                width: ${i % 4 === 0 ? 8 : 4}px;
+                height: 1px;
+                background: rgba(168,85,247,${i % 4 === 0 ? 0.5 : 0.2});
+                top: calc(50% + ${y}px);
+                left: calc(50% + ${x}px);
+                transform: rotate(${angle}deg);
+                transform-origin: left center;
+            `;
+            ticks.appendChild(t);
+        }
+
+        // ── Floating data points
+        const dpContainer = document.getElementById('data-points');
+        const dpStrings = ['A7F2·3K9', '0xFF·4A2C', 'SEC·OK', '::AUTH', '4096bit', 'SHA-512', 'NODE·7', '0x8FA2', 'TLS1.3'];
+        for (let i = 0; i < 12; i++) {
+            const dp = document.createElement('div');
+            dp.className = 'data-point';
+            dp.style.left = Math.random() * 100 + 'vw';
+            dp.style.bottom = '-20px';
+            dp.style.animationDelay = (Math.random() * 8) + 's';
+            dp.style.animationDuration = (6 + Math.random() * 8) + 's';
+            dp.innerText = dpStrings[Math.floor(Math.random() * dpStrings.length)];
+            dpContainer.appendChild(dp);
+        }
+
+        // ── Timestamp
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('timestamp').innerText =
+                now.toTimeString().split(' ')[0];
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // ── UID scramble
+        const uidChars = 'ABCDEF0123456789';
+        let uidFinal = Array.from({length: 8}, () => uidChars[Math.floor(Math.random()*16)]).join('');
+        let uidRevealed = 0;
+        function revealUID() {
+            if (uidRevealed < uidFinal.length) {
+                const revealed = uidFinal.slice(0, uidRevealed + 1);
+                const hidden = '·'.repeat(uidFinal.length - uidRevealed - 1);
+                document.getElementById('uid-val').innerText = revealed + hidden;
+                uidRevealed++;
+                setTimeout(revealUID, 200 + Math.random() * 150);
+            }
+        }
+        setTimeout(revealUID, 600);
+
+        // ── Segments
+        const segs = document.querySelectorAll('.seg');
+        function updateSegments(pct) {
+            const total = segs.length;
+            const filled = (pct / 100) * total;
+            segs.forEach((seg, i) => {
+                seg.classList.remove('active', 'partial');
+                seg.querySelector('.seg-fill').style.removeProperty('--partial');
+                if (i < Math.floor(filled)) {
+                    seg.classList.add('active');
+                } else if (i === Math.floor(filled)) {
+                    const partial = filled - Math.floor(filled);
+                    seg.classList.add('partial');
+                    seg.querySelector('.seg-fill').style.setProperty('--partial', partial);
+                    seg.querySelector('.seg-fill').style.transform = `scaleX(${partial})`;
+                }
+            });
+        }
+
+        // ── Main loader
+        const logs = [
+            { at: 0,  text: 'INIT_SEQUENCE_STARTED',      label: 'Initializing' },
+            { at: 18, text: 'CHECKING_ENCRYPT_PROTOCOLS', label: 'Encrypting' },
+            { at: 35, text: 'SECURE_HANDSHAKE_ESTABLISH', label: 'Handshaking' },
+            { at: 52, text: 'LOADING_AUTH_ASSETS',        label: 'Loading assets' },
+            { at: 68, text: 'AUTHORIZING_USER_NODE',      label: 'Authorizing' },
+            { at: 85, text: 'FINALIZING_SESSION',         label: 'Finalizing' },
+            { at: 98, text: 'ACCESS_GRANTED',             label: 'Access Granted' },
+        ];
+
+        function runLoader() {
+            const bar      = document.getElementById('bar');
+            const pText    = document.getElementById('percent-text');
+            const sText    = document.getElementById('status-text');
+            const logText  = document.getElementById('system-log');
+            const wrapper  = document.getElementById('loader-wrapper');
+            const dot      = document.getElementById('status-dot');
+            const flash    = document.getElementById('granted-flash');
+
+            let progress = 0;
+            let lastLog = -1;
+
+            const update = setInterval(() => {
+                // Jittery realistic progress with occasional hesitations
+                const jitter = Math.random();
+                if (jitter < 0.05) { /* pause */ }
+                else progress += (Math.random() * 1.8) + 0.2;
+
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(update);
+
+                    // Flash green
+                    flash.classList.add('show');
+                    setTimeout(() => flash.classList.remove('show'), 150);
+
+                    // Update UI
+                    sText.innerText = 'Access Granted';
+                    dot.classList.add('green');
+                    logText.innerText = 'SESSION_AUTHENTICATED·OK';
+                    pText.style.color = 'var(--green)';
+
+                    setTimeout(() => {
+                        wrapper.classList.add('exit');
+                        setTimeout(() => {
+                            window.location.href = 'main.html';
+                        }, 1000);
+                    }, 700);
+                }
+
+                bar.style.width = progress + '%';
+                pText.innerText = Math.floor(progress) + '%';
+                updateSegments(progress);
+
+                // Log messages
+                for (let i = logs.length - 1; i >= 0; i--) {
+                    if (progress >= logs[i].at && lastLog !== i) {
+                        lastLog = i;
+                        // Typewriter effect
+                        const target = logs[i].text;
+                        sText.innerText = logs[i].label;
+                        let j = 0;
+                        logText.innerText = '';
+                        const type = setInterval(() => {
+                            logText.innerText += target[j];
+                            j++;
+                            if (j >= target.length) clearInterval(type);
+                        }, 28);
+                        break;
+                    }
+                }
+
+            }, 50);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(runLoader, 400);
+        });
+    </script>
+</body>
+</html>
