@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Assignment Portal</title>
+  <meta name="description" content="Daily Assignment Portal - Access your batch assignments" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(-45deg, #0f1219, #161a2b, #111827, #1a1530);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+    }
+
+    h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; transform: scale(1); }
+      to { opacity: 0; transform: scale(0.95); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
+
+    @keyframes lineGrow {
+      from { width: 0; }
+      to { width: 96px; }
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      animation: pulseGlow 5s ease-in-out infinite;
+    }
+    .orb-1 { width: 300px; height: 300px; background: rgba(56, 189, 248, 0.08); top: 15%; left: 20%; }
+    .orb-2 { width: 400px; height: 400px; background: rgba(139, 92, 246, 0.08); bottom: 15%; right: 15%; animation-delay: 1.5s; }
+    .orb-3 { width: 350px; height: 350px; background: rgba(52, 211, 153, 0.04); top: 50%; left: 50%; transform: translate(-50%, -50%); filter: blur(130px); }
+
+    #welcome {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 20;
+      animation: fadeInUp 0.8s ease-out both;
+    }
+    #welcome.hide { animation: fadeOut 0.5s ease-in forwards; }
+
+    .welcome-icon {
+      width: 64px; height: 64px;
+      color: #38bdf8;
+      margin-bottom: 24px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .welcome-title {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.2;
+      padding: 0 16px;
+    }
+    .welcome-title .gradient {
+      background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .welcome-title .white { color: #e8eaed; }
+
+    .welcome-line {
+      margin-top: 24px;
+      height: 4px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #38bdf8, #8b5cf6);
+      animation: lineGrow 1s 0.5s ease-out both;
+    }
+
+    #main {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      padding: 16px;
+      width: 100%;
+      max-width: 680px;
+      z-index: 10;
+      position: relative;
+    }
+    #main.show {
+      display: flex;
+      animation: fadeInUp 0.6s ease-out both;
+    }
+
+    .main-title {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+    }
+    .main-sub { color: #8892a5; font-size: 1.1rem; margin-top: 4px; text-align: center; }
+
+    .btn-row { display: flex; gap: 24px; width: 100%; }
+    @media (max-width: 600px) { .btn-row { flex-direction: column; } }
+
+    .batch-btn {
+      flex: 1;
+      background: rgba(22, 27, 45, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 32px;
+      cursor: pointer;
+      text-align: left;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease-out both;
+    }
+    .batch-btn:nth-child(2) { animation-delay: 0.15s; }
+    .batch-btn:hover { transform: translateY(-4px) scale(1.02); border-color: rgba(56, 189, 248, 0.25); }
+    .batch-btn.primary:hover { box-shadow: 0 0 40px rgba(56, 189, 248, 0.12), 0 0 80px rgba(56, 189, 248, 0.05); }
+    .batch-btn.secondary:hover { box-shadow: 0 0 40px rgba(139, 92, 246, 0.12), 0 0 80px rgba(139, 92, 246, 0.05); }
+
+    .btn-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    .primary .btn-icon { background: rgba(56, 189, 248, 0.12); color: #38bdf8; }
+    .secondary .btn-icon { background: rgba(139, 92, 246, 0.12); color: #8b5cf6; }
+
+    .btn-time {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #e8eaed;
+      margin-bottom: 4px;
+    }
+    .btn-label { font-size: 0.875rem; color: #8892a5; margin-bottom: 24px; }
+
+    .btn-action {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.875rem; font-weight: 600;
+      transition: gap 0.3s ease;
+    }
+    .primary .btn-action { color: #38bdf8; }
+    .secondary .btn-action { color: #8b5cf6; }
+    .batch-btn:hover .btn-action { gap: 14px; }
+    .arrow { transition: transform 0.3s ease; }
+    .batch-btn:hover .arrow { transform: translateX(4px); }
+
+    .footer { color: rgba(136, 146, 165, 0.5); font-size: 0.8rem; margin-top: 16px; }
+
+    /* Hide React root */
+    #root { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div id="welcome">
+    <svg class="welcome-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+    </svg>
+    <h1 class="welcome-title">
+      <span class="gradient">Welcome to the</span><br>
+      <span class="white">Daily Assignment Portal by Veera</span>
+    </h1>
+    <div class="welcome-line"></div>
+    <div style="text-align:center; margin-top:10px;">
+      <span style="color:#8b5cf6; font-size:0.95rem;">Developed by Abinash Kumar</span>
+    </div>
+  </div>
+
+  <div id="main">
+    <div>
+      <h1 class="main-title">Daily Assignment Portal</h1>
+      <p class="main-sub">Select your batch to access today's assignments</p>
+    </div>
+    <div class="btn-row">
+      <a href="https://google.com" target="_blank" class="batch-btn primary">
+        <div class="btn-icon">🕢</div>
+        <div class="btn-time">7:30 AM Batch</div>
+        <div class="btn-label">Morning Batch</div>
+        <div class="btn-action"><span>Open Assignments</span><span class="arrow">→</span></div>
+      </a>
+      <a href="https://google.com" target="_blank" class="batch-btn secondary">
+        <div class="btn-icon">🕘</div>
+        <div class="btn-time">9:00 AM Batch</div>
+        <div class="btn-label">Late Morning Batch</div>
+        <div class="btn-action"><span>Open Assignments</span><span class="arrow">→</span></div>
+      </a>
+    </div>
+    <footer class="footer">
+      <span>&copy; 2026 Daily Assignment Portal</span><br>
+      <span>
+        Developed by <strong>Abinash Kumar</strong> &mdash; Managed by <strong>Veera</strong>
+      </span>
+    </footer>
+  </div>
+
+  <script>
+    setTimeout(function() {
+      var w = document.getElementById('welcome');
+      w.classList.add('hide');
+      setTimeout(function() {
+        w.style.display = 'none';
+        document.getElementById('main').classList.add('show');
+      }, 500);
+    }, 2500);
+  </script>
+
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
