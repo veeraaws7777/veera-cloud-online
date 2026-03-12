@@ -151,6 +151,7 @@
     .batch-btn:hover { transform: translateY(-4px) scale(1.02); border-color: rgba(56, 189, 248, 0.25); }
     .batch-btn.primary:hover { box-shadow: 0 0 40px rgba(56, 189, 248, 0.12), 0 0 80px rgba(56, 189, 248, 0.05); }
     .batch-btn.secondary:hover { box-shadow: 0 0 40px rgba(139, 92, 246, 0.12), 0 0 80px rgba(139, 92, 246, 0.05); }
+    .batch-btn.referral:hover { border-color: rgba(52, 211, 153, 0.25); box-shadow: 0 0 40px rgba(52, 211, 153, 0.12), 0 0 80px rgba(52, 211, 153, 0.05); }
 
     .btn-icon {
       width: 48px; height: 48px;
@@ -184,7 +185,6 @@
 
     .footer { color: rgba(136, 146, 165, 0.5); font-size: 0.8rem; margin-top: 16px; }
 
-    /* Hide React root */
     #root { display: none; }
   </style>
 </head>
@@ -214,19 +214,81 @@
       <p class="main-sub">Select your batch to access today's assignments</p>
     </div>
     <div class="btn-row">
-      <a href="https://service-7-30-am-batch-930309904548.us-west1.run.app/" target="_blank" class="batch-btn primary">
+      <!-- ✅ Removed target="_blank" — opens in same tab -->
+      <a href="https://service-7-30-am-998629614555.us-west1.run.app" class="batch-btn primary" onclick="showLoading(event, this)">
         <div class="btn-icon">🕢</div>
         <div class="btn-time">7:30 AM Batch</div>
         <div class="btn-label">Morning Batch</div>
-        <div class="btn-action"><span>Open Assignments</span><span class="arrow">→</span></div>
+        <div class="btn-action">
+          <span class="btn-text">Open Assignments</span>
+          <span class="loading-spinner" style="display:none;">
+            <span class="spinner"></span>
+          </span>
+          <span class="arrow">→</span>
+        </div>
       </a>
-      <a href="https://veera9-00am-930309904548.us-west1.run.app/" target="_blank" class="batch-btn secondary">
+      <!-- ✅ Removed target="_blank" — opens in same tab -->
+      <a href="https://service-9-00-am-998629614555.us-west1.run.app/" class="batch-btn secondary" onclick="showLoading(event, this)">
         <div class="btn-icon">🕘</div>
         <div class="btn-time">9:00 AM Batch</div>
         <div class="btn-label">Late Morning Batch</div>
-        <div class="btn-action"><span>Open Assignments</span><span class="arrow">→</span></div>
+        <div class="btn-action">
+          <span class="btn-text">Open Assignments</span>
+          <span class="loading-spinner" style="display:none;">
+            <span class="spinner"></span>
+          </span>
+          <span class="arrow">→</span>
+        </div>
       </a>
     </div>
+    <style>
+      .loading-spinner {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 6px;
+      }
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(56, 189, 248, 0.3);
+        border-top: 2px solid #38bdf8;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: -2px;
+      }
+      .batch-btn.secondary .spinner {
+        border-top: 2px solid #8b5cf6;
+        border: 2px solid rgba(139, 92, 246, 0.2);
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script>
+      function showLoading(e, el) {
+        e.preventDefault();
+
+        // Hide all loading spinners and enable text/arrows in case of repeat use
+        document.querySelectorAll('.loading-spinner').forEach(ls => ls.style.display = "none");
+        document.querySelectorAll('.btn-text').forEach(bt => bt.style.display = "inline");
+        document.querySelectorAll('.arrow').forEach(a => a.style.display = "inline");
+
+        // Get action button parts
+        const btnAction = el.querySelector('.btn-action');
+        const btnText = btnAction.querySelector('.btn-text');
+        const spinner = btnAction.querySelector('.loading-spinner');
+        const arrow = btnAction.querySelector('.arrow');
+
+        btnText.style.display = 'none';
+        arrow.style.display = 'none';
+        spinner.style.display = 'inline-flex';
+
+        setTimeout(() => {
+          window.location.href = el.href;
+        }, 550); // Brief delay for spinner animation
+      }
+    </script>
     <footer class="footer">
       <span>&copy; 2026 Daily Assignment Portal</span><br>
       <span>
@@ -247,6 +309,111 @@
   </script>
 
   <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Referral Bot - Fixed Bottom Right Corner -->
+  <div id="referral-wrap" style="
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  ">
+    <!-- Speech bubble popup -->
+    <div id="referral-bubble" style="
+      background: rgba(18, 24, 38, 0.95);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 14px 18px;
+      color: #e8eaed;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(52,211,153,0.1);
+      max-width: 220px;
+      text-align: center;
+      position: relative;
+      transform: translateY(8px);
+      opacity: 0;
+      transition: all 0.4s ease 0.2s;
+    ">
+      <div style="font-weight:600; color:#34d399; margin-bottom:4px;">Do you want more questions?</div>
+      <div style="color:#c0c8d8;">Hit me to get MCQ's!</div>
+      <!-- bubble tail -->
+      <div style="
+        position: absolute;
+        bottom: -8px;
+        right: 26px;
+        width: 0; height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid rgba(52, 211, 153, 0.35);
+      "></div>
+      <div style="
+        position: absolute;
+        bottom: -7px;
+        right: 27px;
+        width: 0; height: 0;
+        border-left: 7px solid transparent;
+        border-right: 7px solid transparent;
+        border-top: 7px solid rgba(18,24,38,0.95);
+      "></div>
+    </div>
+
+    <!-- Robot icon button -->
+    <a href="/veeratempquest" id="referral-btn" style="
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+      filter: drop-shadow(0 0 12px rgba(52,211,153,0.4));
+      animation: floatBot 3s ease-in-out infinite;
+    "
+    onmouseover="this.style.transform='scale(1.12)';"
+    onmouseout="this.style.transform='scale(1)';">
+      <img src="https://static.vecteezy.com/system/resources/previews/042/235/526/non_2x/isolated-cute-robot-with-a-happy-smile-in-transparent-background-free-png.png"
+        alt="Referral Bot"
+        style="width:68px; height:68px; object-fit:contain;" />
+    </a>
+  </div>
+
+  <style>
+    @keyframes floatBot {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+  </style>
+
+  <script>
+    // Show robot after intro completes (2500ms fade + 500ms transition = 3200ms)
+    setTimeout(function() {
+      var wrap = document.getElementById('referral-wrap');
+      var bubble = document.getElementById('referral-bubble');
+      wrap.style.opacity = '1';
+      wrap.style.pointerEvents = 'auto';
+      // Animate bubble in
+      setTimeout(function() {
+        bubble.style.opacity = '1';
+        bubble.style.transform = 'translateY(0)';
+      }, 300);
+      // Hide bubble after 5 seconds
+      setTimeout(function() {
+        bubble.style.opacity = '0';
+        bubble.style.transform = 'translateY(8px)';
+      }, 5000);
+    }, 3200);
+  </script>
+
 </body>
 </html>
